@@ -8,49 +8,52 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.data.provider.ListDataProvider;
+
+import java.util.List;
 
 @Route(value="todo", layout =LayoutView.class)
 public class TodoView extends VerticalLayout {
 
-    private ToDoListService service;
+    private ListEntryRepo service;
+    TextField descriptionField = new TextField();
+    Button addButton = new Button("Add");
+    VerticalLayout todos = new VerticalLayout();
+    Grid<ListEntry> grid = new Grid<>(ListEntry.class);
 
-    public TodoView(ToDoListService service) {
+    public TodoView(ListEntryRepo service) {
         this.service = service;
 
-        var descriptionField = new TextField();
-        var button = new Button("Add");
-        var todos = new VerticalLayout();
-
         todos.setPadding(false);
-        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        button.addClickShortcut(Key.ENTER);
-        button.addClickListener(click -> {
+        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        addButton.addClickShortcut(Key.ENTER);
+        addButton.addClickListener(click -> {
             var entry = new ListEntry(descriptionField.getValue());
-            service.saveListEntry(entry);
+            service.save(entry);
             todos.add(createCheckbox(entry));
-           //var todo = repo.save(new ListEntry(task.getValue()));
-            //todos.add(createCheckbox(todo));
             descriptionField.clear();
+            grid.setItems(new ListDataProvider<>(service.findAll()));
+
         });
-
-        service.findAllListEntries().forEach(listEntry -> todos.add(createCheckbox(listEntry)));
-
+        grid.setColumns("Description", "Done");
         add(
                 new H1("Todo"),
-                new HorizontalLayout(descriptionField, button),
-                todos
+                new HorizontalLayout(descriptionField, addButton),
+                grid
         );
+
     }
 
     private Component createCheckbox(ListEntry listEntry) {
-        return new Checkbox(listEntry.getDescription(), listEntry.isDone(), e -> {
+        return new Checkbox(listEntry.getDescription(), listEntry.getDone(), e -> {
             listEntry.setDone(e.getValue());
-            //repo.save(listEntry);
         });
     }
 }
