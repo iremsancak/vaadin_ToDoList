@@ -15,18 +15,7 @@ public class ListEntry {
     @GeneratedValue
     private int Id;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ListEntry listEntry = (ListEntry) o;
-        return Id == listEntry.Id;
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(Id);
-    }
 
     @NotEmpty
     private String Description ;
@@ -62,5 +51,17 @@ public class ListEntry {
 
     public void setDone(boolean Done) {
         this.Done = Done;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListEntry listEntry = (ListEntry) o;
+        return Id == listEntry.Id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Id);
     }
 }

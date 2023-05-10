@@ -20,7 +20,6 @@ public class LayoutView extends AppLayout {
                 logo,
                 new RouterLink("Home", HomeView.class),
                 new RouterLink("List", TodoView.class)
-
         );
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
