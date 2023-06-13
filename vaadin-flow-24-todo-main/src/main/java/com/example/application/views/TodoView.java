@@ -5,8 +5,11 @@ import com.example.application.data.repository.ListEntryRepo;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -58,10 +61,17 @@ public class TodoView extends VerticalLayout {
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addButton.addClickShortcut(Key.ENTER);
         addButton.addClickListener(click -> {
-            var entry = new ListEntry(descriptionField.getValue());
-            service.save(entry);
-            descriptionField.clear();
-
+            if(descriptionField.getValue().length() == 0) {
+                Notification notification = Notification
+                        .show("Description can't be empty!");
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+            else {
+                var entry = new ListEntry(descriptionField.getValue());
+                service.save(entry);
+                descriptionField.clear();
+                grid.setItems(new ListDataProvider<>(service.findAll()));
+            }
 
         });
     }
