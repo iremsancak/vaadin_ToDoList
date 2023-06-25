@@ -8,6 +8,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -42,6 +44,12 @@ public class EditForm extends FormLayout {
         return new HorizontalLayout(save, close);
     }
     private void validateAndSave() {
+        if(listEntry.getDescription().length() == 0)
+        {
+            Notification notification = Notification
+                    .show("Description can't be empty!");
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
         try {
             binder.writeBean(listEntry);
             fireEvent(new SaveEvent(this, listEntry));
